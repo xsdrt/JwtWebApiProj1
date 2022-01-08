@@ -5,6 +5,12 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 
+
+
+// A using JWT security token for authorization purposes example project.  Shows how to create a user registration, login a user, return a JWT.
+// Of course this is just a working example, you would want to use the JWT in Authorization header of your  HTTP  requests.
+// To use, you would use the authorize attribute in the methods you would want to restrict to only authorized users.  Maybe do another example for authorized roles etc...
+
 namespace JwtWebApiProj1.Controllers
 {
     [Route("api/[controller]")]
@@ -21,7 +27,7 @@ namespace JwtWebApiProj1.Controllers
 
 
         //Call the register methods below.  But be aware in an actual app would not have this logic in the controller,
-        //but use the Repository pattern along with an Authintication Service call and dependency injection....
+        //but use the Repository pattern along with an Authentication Service call and dependency injection....
 
         // Use cryptography algorithm methods to create the PasswordHash and PasswordSalt,
         // and store in the user object.  When user logs in use the PasswordHash and stored Salt , compare this and verify the login,
@@ -30,7 +36,7 @@ namespace JwtWebApiProj1.Controllers
         [HttpPost("register")]      //Register the user
         public async Task<ActionResult<User>> Register(UserDto request)       
         {
-            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt); //Call the CreatPasswordHash method to generate the values using the user
+            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt); //Call the CreatePasswordHash method to generate the values using the user
                                                                                                     // supplied Password of course ;)....
            
             user.Username = request.Username;
@@ -54,7 +60,7 @@ namespace JwtWebApiProj1.Controllers
                 return BadRequest("Wrong password.");
             }
 
-            string token = CreateToken(user);   //If everthing correct, then create the securityJwt Token using the CreateToken method and then return the jwt...
+            string token = CreateToken(user);   //If everything correct, then create the securityJwt Token using the CreateToken method and then return the jwt...
             return Ok(token);
         }
 
@@ -67,7 +73,7 @@ namespace JwtWebApiProj1.Controllers
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(              //using System.IdentityModel.Tokens; namespace reference...
-                _configuration.GetSection("AppSettings:Token").Value));  //Need a top secret key we put in our appsettings.json file;use the configuration to retriev it(Value)...
+                _configuration.GetSection("AppSettings:Token").Value));  //Need a top secret key we put in our appsettings.json file;use the configuration to retrieve it(Value)...
 
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature); //Using the key created above...
 
